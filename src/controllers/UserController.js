@@ -37,18 +37,30 @@ module.exports = {
     response.send(200, newUser);
   },
 
-  updateUserById(request, response) {
+  updateUser(request, response) {
     const { id } = request.params;
     const { name } = request.body;
 
-    const user = users.find((user) => user.id === Number(id));
+    const userExists = users.find((user) => user.id === Number(id));
 
-    if (!user) return response.send(404, { error: 'User not found.' });
+    if (!userExists) return response.send(404, { error: 'User not found.' });
 
     users = users.map((user) =>
       user.id === Number(id) ? { ...user, name } : user
     );
 
     response.send(200, { id, name });
+  },
+
+  deleteUser(request, response) {
+    const { id } = request.params;
+
+    const userExists = users.find((user) => user.id === Number(id));
+
+    if (!userExists) return response.send(404, { error: 'User not found.' });
+
+    users = users.filter((user) => user.id !== Number(id));
+
+    response.send(200, userExists);
   },
 };
