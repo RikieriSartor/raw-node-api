@@ -1,4 +1,4 @@
-const users = require('../mocks/users');
+let users = require('../mocks/users');
 
 module.exports = {
   listUsers(request, response) {
@@ -22,5 +22,33 @@ module.exports = {
     if (!user) return response.send(404, { error: 'User not found.' });
 
     response.send(200, user);
+  },
+
+  createUser(request, response) {
+    const { body } = request;
+    const lastUserId = users[users.length - 1].id;
+    const newUser = {
+      id: lastUserId + 1,
+      name: body.name,
+    };
+
+    users.push(newUser);
+
+    response.send(200, newUser);
+  },
+
+  updateUserById(request, response) {
+    const { id } = request.params;
+    const { name } = request.body;
+
+    const user = users.find((user) => user.id === Number(id));
+
+    if (!user) return response.send(404, { error: 'User not found.' });
+
+    users = users.map((user) =>
+      user.id === Number(id) ? { ...user, name } : user
+    );
+
+    response.send(200, { id, name });
   },
 };
